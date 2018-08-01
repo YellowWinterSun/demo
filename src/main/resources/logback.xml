@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<contextName>logback</contextName>
+	<property name="log.monitor.systemMonitor" value="log\\demo-monitor-systemMonitor"/>
+	<property name="log.monitor.mybatis" value="log\\demo-monitor-mybatisMonitor"/>
+    <property name="log.monitor.userInfo" value="log\\demo-monitor-userMonitor"/>
+	<property name="log.monitor.info" value="log\\demo-monitor-infoMonitor"/>
+
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS}[%level][%thread] - %logger{10}.%M : %msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+
+	<!--输出到文件 系统监控（监控系统情况） -->
+	<appender name="file"
+			  class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.monitor.systemMonitor}</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.monitor.systemMonitor}.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>15</maxHistory>
+			<totalSizeCap>1GB</totalSizeCap>
+		</rollingPolicy>
+		<encoder>
+			<pattern>[ %d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} ]:%msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!--输出到文件 数据库监控（监控数据库操作情况）-->
+	<appender name="file2"
+			  class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.monitor.mybatis}</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.monitor.mybatis}.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>15</maxHistory>
+			<totalSizeCap>1GB</totalSizeCap>
+		</rollingPolicy>
+		<encoder>
+			<pattern>[ %d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} ]:%msg%n</pattern>
+		</encoder>
+	</appender>
+
+    <!-- error级别的日志 -->
+    <appender name="file3" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--如果只是想要 Error 级别的日志，那么需要过滤一下，默认是 info 级别的，ThresholdFilter-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>info</level>
+        </filter>
+
+        <file>${log.monitor.userInfo}</file>
+        <!--滚动策略，按照时间滚动 TimeBasedRollingPolicy-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间-->
+            <FileNamePattern>${log.monitor.userInfo}.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <!--只保留最近15天的日志-->
+            <maxHistory>15</maxHistory>
+            <!--用来指定日志文件的上限大小，那么到了这个值，就会删除旧的日志-->
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <!--日志输出编码格式化-->
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>[ %d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} ]:%msg%n</pattern>
+        </encoder>
+    </appender>
+
+	<!-- info级别的自打印日志 -->
+	<appender name="file4_info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!--如果只是想要 Error 级别的日志，那么需要过滤一下，默认是 info 级别的，ThresholdFilter-->
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>info</level>
+		</filter>
+
+		<file>${log.monitor.info}</file>
+		<!--滚动策略，按照时间滚动 TimeBasedRollingPolicy-->
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!--文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间-->
+			<FileNamePattern>${log.monitor.info}.%d{yyyy-MM-dd}.log</FileNamePattern>
+			<!--只保留最近15天的日志-->
+			<maxHistory>15</maxHistory>
+			<!--用来指定日志文件的上限大小，那么到了这个值，就会删除旧的日志-->
+			<totalSizeCap>1GB</totalSizeCap>
+		</rollingPolicy>
+		<!--日志输出编码格式化-->
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>[ %d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} ]:%msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 打印执行的sql name指定mapper所在的包，additivity设定为true时，父级也会打印相应的信息，相当于打印多次 -->
+	<logger name="com.dayi.demo.mapper" level="DEBUG" additivity="true">
+		<appender-ref ref="file2" />
+	</logger>
+
+    <logger name="com.dayi.demo.interceptor.LoggerInterceptor" level="INFO" additivity="false">
+        <appender-ref ref="file3"/>
+    </logger>
+
+	<logger name="com.dayi.demo" level="INFO" additivity="true">
+		<appender-ref ref="file4_info"/>
+	</logger>
+
+	<root level="INFO">
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+	</root>
+
+</configuration>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+<!--   <classPathEntry location="/Program Files/IBM/SQLLIB/java/db2java.zip" /> -->
+
+	
+
+  <context id="DB2Tables" targetRuntime="MyBatis3">
+  
+  <!-- 删掉逆向工程所自动生成的注释 -->
+  	<commentGenerator>
+		<property name="suppressAllComments" value="true" />
+	</commentGenerator>
+	
+    <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+        connectionURL="jdbc:mysql:///demo"
+        userId="root"
+        password="123456">
+    </jdbcConnection>
+
+    <javaTypeResolver >
+      <property name="forceBigDecimals" value="false" />
+    </javaTypeResolver>
+
+<!-- 指定Javabean实体类生成位置 -->
+    <javaModelGenerator targetPackage="com.dayi.demo.model" targetProject=".\src\main\java">
+      <property name="enableSubPackages" value="true" />
+      <property name="trimStrings" value="true" />
+    </javaModelGenerator>
+
+<!-- 指定映射Mapper.xml文件生成位置 -->
+    <sqlMapGenerator targetPackage="com.dayi.demo.mapper.mapping"  targetProject=".\src\main\java">
+      <property name="enableSubPackages" value="true" />
+    </sqlMapGenerator>
+
+<!-- 指定Mapper接口生成位置，Dao接口生成位置 -->
+    <javaClientGenerator type="XMLMAPPER" targetPackage="com.dayi.demo.mapper"  targetProject=".\src\main\java">
+      <property name="enableSubPackages" value="true" />
+    </javaClientGenerator>
+
+<!-- tableName是数据库表名 -->
+
+    <table tableName="user" domainObjectName="User"></table>
+    <table tableName="department" domainObjectName="Department"></table>
+    <table tableName="dimensionality" domainObjectName="Dimensionality"></table>
+    <table tableName="evaluation_item" domainObjectName="EvaluationItem"></table>
+    <table tableName="job" domainObjectName="Job"></table>
+    <table tableName="meeting_room" domainObjectName="MeetingRoom"></table>
+    <table tableName="meeting_room_order" domainObjectName="MeetingRoomOrder"></table>
+    <table tableName="official_evaluation_item" domainObjectName="OfficialEvaluationItem"></table>
+    <table tableName="official_performance_evaluation" domainObjectName="OfficialPerformanceEvaluation"></table>
+    <table tableName="performance_evaluation_template" domainObjectName="PerformanceEvaluationTemplate"></table>
+    <table tableName="role" domainObjectName="Role"></table>
+    <table tableName="role_to_url" domainObjectName="RoleToUrl"></table>
+    <table tableName="system_url" domainObjectName="SystemUrl"></table>
+    <table tableName="template_to_item" domainObjectName="TemplateToItem"></table>
+    <table tableName="user_to_role" domainObjectName="UserToRole"></table>
+
+  	
+	 
+  </context>
+</generatorConfiguration>

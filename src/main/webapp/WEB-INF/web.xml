@@ -1,0 +1,48 @@
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         metadata-complete="true">
+
+    <!-- 由spring注册系统模块 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <!--<param-value>classpath:spring-resources-conf.xml;classpath:spring-dao-conf.xml</param-value>-->
+        <param-value>classpath:spring*.xml</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- spring MVC -->
+    <servlet>
+        <servlet-name>SpringMVC</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:spring-mvc-conf.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SpringMVC</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <!-- session失效30min -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
+    <!-- 404跳转页面 -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/to404</location>
+    </error-page>
+
+    <!-- 500跳转页面 -->
+    <error-page>
+        <error-code>500</error-code>
+        <location>/to500</location>
+    </error-page>
+
+</web-app>

@@ -1,0 +1,5 @@
+(1)本项目的文件采用本地文件系统，因此设置了Jetty虚拟路径。请自行新建文件夹D:/ProgrammaSoftware/jettyPath/demo  或者更改pom.xml中的配置路径以及MeetingRoomController中定义的路径属性
+(2)在虚拟路径demo文件夹下，放置一张尺寸为4:3，名为:meetingroom-default.jpg的文件作为会议室默认图片。否则系统运行会有问题
+(3)IDEA用maven->jetty:run的方式跑项目
+(4)Maven本地私服，有点小问题，容易出现jar包下载不完整，导致error in open xxx.jar的编译错误。因此pom.xml中将本地私服的配置注释掉了
+(5)涉及邮件发送，所以在application.properties中设置了作者的邮箱密码，该地方被作者清除掉。如需使用，请自行百度查阅JavaMail的用法，以及邮箱相关的设置。然后再将自己的邮箱信息配置到application.properties中

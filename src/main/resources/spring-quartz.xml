@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--1.注入任务处理类bean  -->
+    <bean id="messageTask" class="com.dayi.demo.scheduler.MessageQuartz"></bean>
+    <bean id="daoTask" class="com.dayi.demo.scheduler.DaoQuartz"></bean>
+
+    <!-- 2.任务触发器详细信息bean -->
+    <bean id="messageTask_messageMeetingStartJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <!-- 设置任务执行对象 -->
+        <property name="targetObject" ref="messageTask"></property>
+        <!-- 设置任务执行对象中对应的执行方法 -->
+        <property name="targetMethod" value="messageMeetingStart"></property>
+        <!-- 设置任务是否可并发执行，默认为不并发 -->
+        <property name="concurrent" value="true"></property>
+    </bean>
+    <bean id="daoTask_meetingOrderStatusOverdueJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <!-- 设置任务执行对象 -->
+        <property name="targetObject" ref="daoTask"></property>
+        <!-- 设置任务执行对象中对应的执行方法 -->
+        <property name="targetMethod" value="meetingOrderStatusOverdue"></property>
+        <!-- 设置任务是否可并发执行，默认为不并发 -->
+        <property name="concurrent" value="true"></property>
+    </bean>
+    <bean id="daoTask_deleteCancelOrderJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <!-- 设置任务执行对象 -->
+        <property name="targetObject" ref="daoTask"></property>
+        <!-- 设置任务执行对象中对应的执行方法 -->
+        <property name="targetMethod" value="deleteCancelOrder"></property>
+        <!-- 设置任务是否可并发执行，默认为不并发 -->
+        <property name="concurrent" value="true"></property>
+    </bean>
+    <bean id="daoTask_deleteOverdueOrderJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <!-- 设置任务执行对象 -->
+        <property name="targetObject" ref="daoTask"></property>
+        <!-- 设置任务执行对象中对应的执行方法 -->
+        <property name="targetMethod" value="deleteOverdueOrder"></property>
+        <!-- 设置任务是否可并发执行，默认为不并发 -->
+        <property name="concurrent" value="true"></property>
+    </bean>
+    <bean id="daoTask_deleteVoidRecord" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <!-- 设置任务执行对象 -->
+        <property name="targetObject" ref="daoTask"></property>
+        <!-- 设置任务执行对象中对应的执行方法 -->
+        <property name="targetMethod" value="deleteVoidRecord"></property>
+        <!-- 设置任务是否可并发执行，默认为不并发 -->
+        <property name="concurrent" value="true"></property>
+    </bean>
+
+    <!-- 3.任务触发器 -->
+    <!-- 会议开始前1小时，半小时通知参会人员 -->
+    <bean id="messageTask_messageMeetingStartJob_trigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <!-- 设置任务详细信息 -->
+        <property name="jobDetail" ref="messageTask_messageMeetingStartJob"></property>
+        <!-- 设置quartz任务执行表达式 ,每隔五分钟执行一次任务-->
+        <property name="cronExpression" value="0 */5 * * * ?"></property>
+    </bean>
+    <!-- 3.1 将过期的会议预约，状态从NORMAL改为OVERDUE-->
+    <bean id="daoTask_meetingOrderStatusOverdueJob_trigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <!-- 设置任务详细信息 -->
+        <property name="jobDetail" ref="daoTask_meetingOrderStatusOverdueJob"></property>
+        <!-- 设置quartz任务执行表达式 ,每隔半小时后执行一次任务-->
+        <property name="cronExpression" value="0 0/30 * * * ?"></property>
+    </bean>
+    <!-- 3.2 将所有取消的会议预约删除-->
+    <bean id="daoTask_deleteCancelOrderJob_trigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <!-- 设置任务详细信息 -->
+        <property name="jobDetail" ref="daoTask_deleteCancelOrderJob"></property>
+        <!-- 设置quartz任务执行表达式 ,每隔一天执行一次任务-->
+        <property name="cronExpression" value="0 0 0 * * ? *"></property>
+    </bean>
+    <!-- 3.3 将本周已完成的所有会议预约记录删除-->
+    <bean id="daoTask_deleteOverdueOrderJob_trigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <!-- 设置任务详细信息 -->
+        <property name="jobDetail" ref="daoTask_deleteOverdueOrderJob"></property>
+        <!-- 设置quartz任务执行表达式 ,每隔一周执行一次任务-->
+        <property name="cronExpression" value="0 0 0 ? * SUN"></property>
+    </bean>
+    <!-- 3.4 清理用户-角色，角色-权限中间表的无用信息-->
+    <bean id="daoTask_deleteVoidRecord_trigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <!-- 设置任务详细信息 -->
+        <property name="jobDetail" ref="daoTask_deleteVoidRecord"></property>
+        <!-- 设置quartz任务执行表达式 ,每隔一天(凌晨1点执行)执行一次任务 0 0 1 * * ? *-->
+        <property name="cronExpression" value="0 0 1 * * ? *"></property>
+    </bean>
+
+    <!-- 4.设置触发器调度工厂 -->
+    <bean id="schedulerFactory" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <!-- 触发器调度工厂调度触发器 -->
+                <ref bean="messageTask_messageMeetingStartJob_trigger"/>
+                <ref bean="daoTask_meetingOrderStatusOverdueJob_trigger"/>
+                <ref bean="daoTask_deleteCancelOrderJob_trigger"/>
+                <ref bean="daoTask_deleteOverdueOrderJob_trigger"/>
+                <ref bean="daoTask_deleteVoidRecord_trigger"/>
+            </list>
+        </property>
+    </bean>
+</beans>
